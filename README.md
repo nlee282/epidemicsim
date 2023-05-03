@@ -1,4 +1,4 @@
-# epidemicsim
+# Epidemic Simulation
 
 this is a science fair project coded in Processing that simulates an epidemic with dots
 
