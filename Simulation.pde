@@ -1,5 +1,3 @@
-
-
 int numDots = 100; // number of dots
 float radius = 4; // radius of a dot
 int spread = 6; // radius for an infected dot to infect
@@ -7,9 +5,9 @@ float spreadChance = 0.6; // percentage that a dot in an infected dots spread ra
 float mortalityRate = 0.01; // chance of death for infected
 int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
-int quarintineTime = 5000; // time after infect to quarintine
 
-// >>> ONLY CHANGE VARIABLES ABOVE <<< //
+
+// >>> TWEAK VARIABLES ABOVE <<< //
 
 
 int rectX = 100;  // x position of the rectangle
@@ -39,9 +37,10 @@ void setup() {
 }
 
 void draw() {
-  background(255, 255, 255);
+  background(0, 0, 0);
   stroke(1);
   noFill();
+  stroke(255, 255, 255);
   rect(100, 150, 600, 600);
   
   
@@ -64,7 +63,7 @@ void draw() {
     }
   }
   // Print the number of dots in each state
-  fill(0, 0, 0);
+  fill(255, 255, 255);
   text("Healthy dots: " + numHealthyDots, 10, 10);
   text("Infected dots: " + numInfectedDots, 10, 30);
   text("Recovered dots: " + numRecoveredDots, 10, 50);
@@ -76,7 +75,7 @@ void draw() {
 
 class Dot {
   float x, y, vx, vy;
-  color dotColor = color(71, 191, 255);
+  color dotColor = color(71, 209, 255);
   long infectedTime;
   int state = 0; // 0 - healthy, 1 - infected, 2 - recovered, 3 - dead or quarintined
 
@@ -93,9 +92,9 @@ class Dot {
       dotColor = color(255, 0, 0);
       infectedTime = millis();
     } else if (state == 2) {
-      dotColor = color(127, 127, 127);
+      dotColor = color(71, 209, 255);
     } else if (state == 3) {
-      dotColor = color(255, 255, 255);
+      dotColor = color(0, 0, 0);
     }
   }
 
