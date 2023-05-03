@@ -37,6 +37,7 @@ void setup() {
 }
 
 void draw() {
+  int totalContacts = 0;
   background(0, 0, 0);
   stroke(1);
   noFill();
@@ -60,7 +61,13 @@ void draw() {
       numRecoveredDots++;
     } else if (d.state == 3) {
       deadDots++;
+      
     }
+    if (d.state == 1) {
+        totalContacts += d.contacts;
+    }
+ 
+    
   }
   // Print the number of dots in each state
   fill(255, 255, 255);
@@ -68,6 +75,9 @@ void draw() {
   text("Infected dots: " + numInfectedDots, 10, 30);
   text("Recovered dots: " + numRecoveredDots, 10, 50);
   text("Dead: " + deadDots, 10, 70);
+  float averageContacts = numInfectedDots > 0 ? (float) totalContacts / numInfectedDots : 0;
+  fill(255, 255, 255);
+  text("Average Contacts: " + averageContacts, 10, 90);
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
   //text("Recovery time: "  + recoveryTime, 120, 50);
@@ -78,7 +88,8 @@ class Dot {
   color dotColor = color(71, 209, 255);
   long infectedTime;
   int state = 0; // 0 - healthy, 1 - infected, 2 - recovered, 3 - dead or quarintined
-
+  int contacts = 0;
+  
   Dot(float x, float y, float vx, float vy) {
     this.x = x;
     this.y = y;
@@ -120,14 +131,15 @@ class Dot {
   void checkCollision(Dot[] others) {
     for (Dot other : others) {
       if (other != this && dist(x, y, other.x, other.y) < 2 * spread) {
-        if (random(1) > spreadChance) {
+        if (random(1) < spreadChance) {
           if (other.state == 1 && state == 0) {
             setState(1); // Set the dot as infected
-          }
-        }
-      }
-    }
-  }
+            other.contacts++; // Increment the number of contacts for the infected dot
+           }
+         }
+       }
+     }
+   }
 
   void display() {
     if (state == 1 && millis() - infectedTime > recoveryTime) {
