@@ -1,7 +1,7 @@
 int numDots = 100; // number of dots
 float radius = 4; // radius of a dot
 int spread = 6; // radius for an infected dot to infect
-float spreadChance = 0.6; // percentage that a dot in an infected dots spread radius will get infected
+float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.01; // chance of death for infected
 int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
@@ -77,7 +77,8 @@ void draw() {
   text("Dead: " + deadDots, 10, 70);
   float averageContacts = numInfectedDots > 0 ? (float) totalContacts / numInfectedDots : 0;
   fill(255, 255, 255);
-  text("Average Contacts: " + averageContacts, 10, 90);
+  text("Average Contacts Per Dot: " + averageContacts, 10, 90);
+  text("r0: " + averageContacts*(recoveryTime/1000), 10, 110);
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
   //text("Recovery time: "  + recoveryTime, 120, 50);
@@ -103,7 +104,7 @@ class Dot {
       dotColor = color(255, 0, 0);
       infectedTime = millis();
     } else if (state == 2) {
-      dotColor = color(71, 209, 255);
+      dotColor = color(115, 115, 115);
     } else if (state == 3) {
       dotColor = color(0, 0, 0);
     }
