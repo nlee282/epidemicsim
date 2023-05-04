@@ -3,7 +3,7 @@ int radius = 4; // radius of a dot
 int spread = 12; // radius for an infected dot to infect
 float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.011; // chance of death for infected
-int recoveryTime = 14000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
+int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
 int quarintineTime = 3000;
 int quarintineRecovery = 5000;
@@ -122,7 +122,7 @@ class Dot {
   long infectedTime;
   int state = 0; // 0 - healthy, 1 - infected, 2 - recovered, 3 - dead or quarintined
   int contacts = 0;
-  
+  boolean alreadyQuarintined;
   Dot(float x, float y, float vx, float vy) {
     this.x = x;
     this.y = y;
@@ -197,7 +197,7 @@ class Dot {
    }
 
   void display() {
-    if (state == 1 && millis() - pauseDelay - infectedTime > quarintineTime) {
+    if (state == 1 && millis() - pauseDelay - infectedTime > quarintineTime && alreadyQuarintined != true) {
       setState(4);
     }
     if (state == 1 && millis() - pauseDelay - infectedTime > recoveryTime) {
@@ -219,9 +219,10 @@ class Dot {
     if (state == 4 && millis() - pauseDelay - infectedTime > quarintineRecovery+quarintineTime) {
       if (dotColor == color(115, 115, 115)) {
         setState(2);
-        
+        alreadyQuarintined = true;
       } else if (dotColor == color(255, 0, 0)) {
         setState(1);
+        alreadyQuarintined = true;
       }
       x = 400;
       y = 400;
