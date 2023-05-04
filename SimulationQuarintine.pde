@@ -1,12 +1,12 @@
 int numDots = 100; // number of dots
-float radius = 4; // radius of a dot
+int radius = 4; // radius of a dot
 int spread = 12; // radius for an infected dot to infect
 float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.011; // chance of death for infected
-int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
+int recoveryTime = 14000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
 int quarintineTime = 3000;
-int quarintineRecovery = 14000;
+int quarintineRecovery = 5000;
 int timebeforecontagious = 2000;
 // >>> TWEAK VARIABLES ABOVE <<< //
 
@@ -14,12 +14,12 @@ int timebeforecontagious = 2000;
 int rectX = 100;
 int rectY = 150;
 int rectWidth = 600;
-float rectHeight = 600;
+int rectHeight = 600;
 
 int quarintinerectX = 350;
 int quarintinerectY = 40;
 int quarintinerectWidth = 100;
-float quarintinerectHeight = 100;
+int quarintinerectHeight = 100;
 
 Dot[] dots = new Dot[numDots];
 int numHealthyDots = 0;
@@ -27,6 +27,8 @@ int numInfectedDots = 0;
 int numRecoveredDots = 0;
 int deadDots = 0;
 int quarintinedDots = 0;
+
+float pauseDelay = 0;
 
 void setup() {
   size(800, 800);
@@ -93,6 +95,25 @@ void draw() {
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
   //text("Recovery time: "  + recoveryTime, 120, 50);
+}
+
+boolean paused = false;
+
+
+public void keyPressed() {
+
+  if ( key == 'p' ) {
+
+    paused = !paused;
+
+    if (paused) {
+      noLoop();
+      pauseDelay = millis();
+    } else {
+      loop();
+      pauseDelay = millis() - pauseDelay;
+    }
+  }
 }
 
 class Dot {
@@ -165,7 +186,7 @@ class Dot {
   void checkCollision(Dot[] others) {
     for (Dot other : others) {
       if (other != this && dist(x, y, other.x, other.y) < 2 * spread) {
-        if (random(1) < spreadChance && millis() - other.infectedTime>timebeforecontagious) {
+        if (random(1) < spreadChance && millis() - pauseDelay - other.infectedTime>timebeforecontagious) {
           if (other.state == 1 && state == 0) {
             setState(1); // Set the dot as infected
             other.contacts++; // Increment the number of contacts for the infected dot
@@ -176,17 +197,17 @@ class Dot {
    }
 
   void display() {
-    if (state == 1 && millis() - infectedTime > quarintineTime) {
+    if (state == 1 && millis() - pauseDelay - infectedTime > quarintineTime) {
       setState(4);
     }
-    if (state == 1 && millis() - infectedTime > recoveryTime) {
+    if (state == 1 && millis() - pauseDelay - infectedTime > recoveryTime) {
       if (random(1) > mortalityRate) {
         setState(2); // Set the dot as recovered (gray color)
       } else {
         setState(3);
       }
     }
-    if (state == 4 && millis() - infectedTime > recoveryTime) {
+    if (state == 4 && millis() - pauseDelay - infectedTime > recoveryTime) {
       if (random(1) > mortalityRate) {
         dotColor = color(115, 115, 115);
       } else {
@@ -195,7 +216,7 @@ class Dot {
       }
       
     }
-    if (state == 4 && millis() - infectedTime > quarintineRecovery+quarintineTime) {
+    if (state == 4 && millis() - pauseDelay - infectedTime > quarintineRecovery+quarintineTime) {
       if (dotColor == color(115, 115, 115)) {
         setState(2);
         
