@@ -2,10 +2,10 @@ int numDots = 100; // number of dots
 float radius = 4; // radius of a dot
 int spread = 12; // radius for an infected dot to infect
 float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
-float mortalityRate = 0.01; // chance of death for infected
+float mortalityRate = 0.011; // chance of death for infected
 int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
-int quarintineTime = 5000;
+int quarintineTime = 3000;
 int quarintineRecovery = 14000;
 int timebeforecontagious = 2000;
 // >>> TWEAK VARIABLES ABOVE <<< //
@@ -26,6 +26,7 @@ int numHealthyDots = 0;
 int numInfectedDots = 0;
 int numRecoveredDots = 0;
 int deadDots = 0;
+int quarintinedDots = 0;
 
 void setup() {
   size(800, 800);
@@ -55,6 +56,7 @@ void draw() {
   numInfectedDots = 0;
   numRecoveredDots = 0;
   deadDots = 0;
+  quarintinedDots = 0;
   for (Dot d : dots) {
     d.update();
     d.checkCollision(dots);
@@ -68,6 +70,8 @@ void draw() {
     } else if (d.state == 3) {
       deadDots++;
       
+    } else if (d.state == 4) {
+      quarintinedDots++;
     }
     if (d.state == 1) {
         totalContacts += d.contacts;
@@ -83,7 +87,8 @@ void draw() {
   text("Dead: " + deadDots, 10, 70);
   float averageContacts = numInfectedDots > 0 ? (float) totalContacts / numInfectedDots : 0;
   fill(255, 255, 255);
-  text("Average Contacts Per Dot: " + averageContacts, 10, 90);
+  //text("Average Contacts Per Dot: " + averageContacts, 10, 90);
+  text("Quarintined: " + quarintinedDots, 10, 90);
   text("r0: " + averageContacts*(recoveryTime/1000), 10, 110);
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
@@ -190,8 +195,13 @@ class Dot {
       }
       
     }
-    if (state == 4 && millis() - infectedTime > quarintineRecovery) {
-      setState(2);
+    if (state == 4 && millis() - infectedTime > quarintineRecovery+quarintineTime) {
+      if (dotColor == color(115, 115, 115)) {
+        setState(2);
+        
+      } else if (dotColor == color(255, 0, 0)) {
+        setState(1);
+      }
       x = 400;
       y = 400;
     }
