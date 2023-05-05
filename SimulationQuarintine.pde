@@ -28,6 +28,10 @@ int numRecoveredDots = 0;
 int deadDots = 0;
 int quarintinedDots = 0;
 
+int totalContacts = 0;
+float r = 0;
+float peakR = 0;
+
 float pauseDelay = 0;
 
 void setup() {
@@ -46,7 +50,7 @@ void setup() {
 }
 
 void draw() {
-  int totalContacts = 0;
+  
   background(0, 0, 0);
   stroke(1);
   noFill();
@@ -59,6 +63,7 @@ void draw() {
   numRecoveredDots = 0;
   deadDots = 0;
   quarintinedDots = 0;
+  totalContacts = 0;
   for (Dot d : dots) {
     d.update();
     d.checkCollision(dots);
@@ -69,17 +74,22 @@ void draw() {
       numInfectedDots++;
     } else if (d.state == 2) {
       numRecoveredDots++;
+      totalContacts += d.contacts;
     } else if (d.state == 3) {
       deadDots++;
-      
+      totalContacts += d.contacts;
     } else if (d.state == 4) {
       quarintinedDots++;
     }
-    if (d.state == 1) {
-        totalContacts += d.contacts;
-    }
+    
  
     
+  }
+  if (numRecoveredDots != 0) {
+    r = float(totalContacts)/(numRecoveredDots+deadDots);
+  }
+  if (peakR < r) {
+    peakR = r;
   }
   // Print the number of dots in each state
   fill(255, 255, 255);
@@ -87,11 +97,12 @@ void draw() {
   text("Infected dots: " + numInfectedDots, 10, 30);
   text("Recovered dots: " + numRecoveredDots, 10, 50);
   text("Dead: " + deadDots, 10, 70);
-  float averageContacts = numInfectedDots > 0 ? (float) totalContacts / numInfectedDots : 0;
+  
   fill(255, 255, 255);
   //text("Average Contacts Per Dot: " + averageContacts, 10, 90);
   text("Quarintined: " + quarintinedDots, 10, 90);
-  text("r0: " + averageContacts*(recoveryTime/1000), 10, 110);
+  text("r0: " + r, 10, 110);
+  text("Peak r0: " + peakR, 10, 130);
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
   //text("Recovery time: "  + recoveryTime, 120, 50);

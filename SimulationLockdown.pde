@@ -24,6 +24,7 @@ int deadDots = 0;
 
 int totalContacts = 0;
 float r = 0;
+float peakR = 0;
 
 void setup() {
   size(800, 800);
@@ -86,6 +87,9 @@ void draw() {
   if (numRecoveredDots != 0) {
     r = float(totalContacts)/(numRecoveredDots+deadDots);
   }
+  if (peakR < r) {
+    peakR = r;
+  }
   // Print the number of dots in each state
   fill(255, 255, 255);
   text("Healthy dots: " + numHealthyDots, 10, 10);
@@ -93,6 +97,7 @@ void draw() {
   text("Recovered dots: " + numRecoveredDots, 10, 50);
   text("Dead: " + deadDots, 10, 70);
   text("r0: " + r, 10, 90);
+  text("Peak r0: " + peakR, 10, 110);
   fill(255, 255, 255);
   
   //text("Spread percent: "  + spreadChance, 120, 10);

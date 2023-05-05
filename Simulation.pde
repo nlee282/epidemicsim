@@ -1,12 +1,11 @@
 int numDots = 100; // number of dots
 float radius = 4; // radius of a dot
 int spread = 12; // radius for an infected dot to infect
-float spreadChance = 0.9; // percentage that a dot in an infected dots spread radius will get infected
+float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.01; // chance of death for infected
 int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
 int timebeforecontagious = 2000;
-
 
 // >>> TWEAK VARIABLES ABOVE <<< //
 
@@ -24,6 +23,7 @@ int deadDots = 0;
 
 int totalContacts = 0;
 float r = 0;
+float peakR = 0;
 
 void setup() {
   size(800, 800);
@@ -70,7 +70,7 @@ void draw() {
       totalContacts += d.contacts;
       
     }
-    
+    //totalContacts += d.contacts;
    
  
     
@@ -79,6 +79,9 @@ void draw() {
   if (numRecoveredDots != 0) {
     r = float(totalContacts)/(numRecoveredDots+deadDots);
   }
+  if (peakR < r) {
+    peakR = r;
+  }
   // Print the number of dots in each state
   fill(255, 255, 255);
   text("Healthy dots: " + numHealthyDots, 10, 10);
@@ -86,6 +89,7 @@ void draw() {
   text("Recovered dots: " + numRecoveredDots, 10, 50);
   text("Dead: " + deadDots, 10, 70);
   text("r0: " + r, 10, 90);
+  text("Peak r0: " + peakR, 10, 110);
   fill(255, 255, 255);
   
   //text("Spread percent: "  + spreadChance, 120, 10);
