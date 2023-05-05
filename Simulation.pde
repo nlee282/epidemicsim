@@ -1,10 +1,11 @@
 int numDots = 100; // number of dots
 float radius = 4; // radius of a dot
-int spread = 6; // radius for an infected dot to infect
-float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
+int spread = 12; // radius for an infected dot to infect
+float spreadChance = 0.9; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.01; // chance of death for infected
 int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
+int timebeforecontagious = 2000;
 
 
 // >>> TWEAK VARIABLES ABOVE <<< //
@@ -20,6 +21,9 @@ int numHealthyDots = 0;
 int numInfectedDots = 0;
 int numRecoveredDots = 0;
 int deadDots = 0;
+
+int totalContacts = 0;
+float r = 0;
 
 void setup() {
   size(800, 800);
@@ -37,7 +41,7 @@ void setup() {
 }
 
 void draw() {
-  int totalContacts = 0;
+  
   background(0, 0, 0);
   stroke(1);
   noFill();
@@ -49,6 +53,7 @@ void draw() {
   numInfectedDots = 0;
   numRecoveredDots = 0;
   deadDots = 0;
+  totalContacts = 0;
   for (Dot d : dots) {
     d.update();
     d.checkCollision(dots);
@@ -59,15 +64,20 @@ void draw() {
       numInfectedDots++;
     } else if (d.state == 2) {
       numRecoveredDots++;
+      totalContacts += d.contacts;
     } else if (d.state == 3) {
       deadDots++;
+      totalContacts += d.contacts;
       
     }
-    if (d.state == 1) {
-        totalContacts += d.contacts;
-    }
+    
+   
  
     
+  }
+  
+  if (numRecoveredDots != 0) {
+    r = float(totalContacts)/(numRecoveredDots+deadDots);
   }
   // Print the number of dots in each state
   fill(255, 255, 255);
@@ -75,10 +85,9 @@ void draw() {
   text("Infected dots: " + numInfectedDots, 10, 30);
   text("Recovered dots: " + numRecoveredDots, 10, 50);
   text("Dead: " + deadDots, 10, 70);
-  float averageContacts = numInfectedDots > 0 ? (float) totalContacts / numInfectedDots : 0;
+  text("r0: " + r, 10, 90);
   fill(255, 255, 255);
-  text("Average Contacts Per Dot: " + averageContacts, 10, 90);
-  text("r0: " + averageContacts*(recoveryTime/1000), 10, 110);
+  
   //text("Spread percent: "  + spreadChance, 120, 10);
   //text("Death percent: "  + mortalityRate, 120, 30);
   //text("Recovery time: "  + recoveryTime, 120, 50);
@@ -132,10 +141,12 @@ class Dot {
   void checkCollision(Dot[] others) {
     for (Dot other : others) {
       if (other != this && dist(x, y, other.x, other.y) < 2 * spread) {
-        if (random(1) < spreadChance) {
+        if (random(1) < spreadChance && millis() - infectedTime > timebeforecontagious) {
           if (other.state == 1 && state == 0) {
             setState(1); // Set the dot as infected
-            other.contacts++; // Increment the number of contacts for the infected dot
+            other.contacts++;
+            
+            
            }
          }
        }
