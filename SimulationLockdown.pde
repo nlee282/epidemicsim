@@ -3,10 +3,10 @@ float radius = 4; // radius of a dot
 int spread = 6; // radius for an infected dot to infect
 float spreadChance = 0.7; // percentage that a dot in an infected dots spread radius will get infected
 float mortalityRate = 0.01; // chance of death for infected
-int recoveryTime = 7000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
+int recoveryTime = 14000; // time before recovered (MILLISECONDS; 1 second = 1000 milliseconds)
 int originallyInfected = 4; // amount of dots to be infected when sim starts
 int timebeforecontagious = 2000;
-float lockdownPercent = 0.9;// percentage
+float lockdownPercent = 1;// percentage
 
 // >>> TWEAK VARIABLES ABOVE <<< //
 
@@ -36,9 +36,15 @@ void setup() {
   } 
 
   for (int i = 0; i< originallyInfected; i++) {
-    //dots[i].setState(1); // Set the initial infected dot
-    dots[1].setState(5);
+    dots[i].setState(1); // Set the initial infected dot
+    
   }
+  dots[10].setState(5);
+  dots[11].setState(5);
+  dots[12].setState(5);
+  dots[13].setState(5);
+  dots[14].setState(5);
+  
 }
 
 void draw() {
@@ -122,7 +128,7 @@ class Dot {
       dotColor = color(0, 0, 0);
     } else if (state == 5) {
       essentialWorker = true;
-      setState(1);
+      state = 0;
     }
   }
 
